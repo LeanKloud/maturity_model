@@ -3,6 +3,7 @@ import { ChevronRight, Shield, Network, DollarSign, BarChart3, Settings, Upload,
 import Config from '../config/configapi.json';
 import AssessmentQuestions from './AssessmentQuestions';
 import AssessmentScopePage from './AssessmentScopePage';
+import ConsentScreen from './ConsentScreen';
 import CloudProviderSelectionPage from './CloudProviderSelectionPage';
 import AccountInfoPage from './AccountInfoPage';
 import PremiumAssessmentPage from './PremiumAssessmentPage';
@@ -48,6 +49,7 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
 
 function LandingPage() {
   const [showAssessment, setShowAssessment] = useState(false);
+  const [showConsentScreen, setShowConsentScreen] = useState(false);
   const [showScopePage, setShowScopePage] = useState(false);
   const [showProviderPage, setShowProviderPage] = useState(false);
   const [showAccountInfoPage, setShowAccountInfoPage] = useState(false);
@@ -89,11 +91,20 @@ function LandingPage() {
   }, [showAssessment, sessionId]);
 
   const startAssessment = () => {
-    setShowScopePage(true);
+    setShowConsentScreen(true);
   };
 
   const startPremiumAssessment = () => {
     setShowPremiumAssessment(true);
+  };
+
+  const handleConsentContinue = () => {
+    setShowConsentScreen(false);
+    setShowScopePage(true);
+  };
+
+  const handleBackFromConsent = () => {
+    setShowConsentScreen(false);
   };
 
   const handleScopeSelection = (scope: 'organization' | 'account') => {
@@ -109,6 +120,7 @@ function LandingPage() {
 
   const handleBackFromScope = () => {
     setShowScopePage(false);
+    setShowConsentScreen(true);
   };
 
   const handleProviderSelection = (provider: string) => {
@@ -275,6 +287,7 @@ function LandingPage() {
 
   const closeAssessment = () => {
     setShowAssessment(false);
+    setShowConsentScreen(false);
     setShowScopePage(false);
     setShowProviderPage(false);
     setShowAccountInfoPage(false);
@@ -291,6 +304,7 @@ function LandingPage() {
   const handleAssessmentComplete = (score: number) => {
     setAssessmentScore(score);
     setShowAssessment(false);
+    setShowConsentScreen(false);
     setShowScopePage(false);
     setShowProviderPage(false);
     setShowAccountInfoPage(false);
@@ -307,6 +321,15 @@ function LandingPage() {
     setShowConnectionGuide(false);
     // Don't automatically show chatbot for free assessment
   };
+
+  if (showConsentScreen) {
+    return (
+      <ConsentScreen 
+        onBack={handleBackFromConsent}
+        onContinue={handleConsentContinue}
+      />
+    );
+  }
 
   if (showScopePage) {
     return (
