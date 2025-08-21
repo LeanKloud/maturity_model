@@ -427,19 +427,19 @@ export default function AssessmentQuestions({ onComplete, onClose }: AssessmentQ
               onClick={handleProceedToAssessment}
               className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
             >
-              View Detailed Results
+              Download Results as PDF
             </button>
             <button
               onClick={downloadPDF}
               disabled={isDownloading}
-              className="w-full bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              className="w-full bg-gray-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
             >
               {isDownloading ? (
                 <Loader2 className="animate-spin h-5 w-5 mr-2" />
               ) : (
                 <Download className="h-5 w-5 mr-2" />
               )}
-              {isDownloading ? 'Generating PDF...' : 'Download Results as PDF'}
+              {isDownloading ? 'Generating PDF...' : 'View Assessment Summary'}
             </button>
           </div>
         </div>

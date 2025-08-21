@@ -52,6 +52,10 @@ export default function CloudProviderSelectionPage({ onBack, onContinue }: Cloud
           <p className="text-gray-300 text-lg">
             Select your cloud provider for account-specific assessment
           </p>
+          
+          <div className="inline-block bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium mt-4">
+            Free Assessment
+          </div>
         </div>
 
         {/* Provider Selection */}

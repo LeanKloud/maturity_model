@@ -66,6 +66,10 @@ export default function AccountInfoPage({ onBack, onContinue, selectedProvider }
           <p className="text-gray-300 text-lg">
             Enter your account information for targeted assessment
           </p>
+          
+          <div className="inline-block bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium mt-4">
+            Free Assessment
+          </div>
         </div>
 
         {/* Security Notice */}

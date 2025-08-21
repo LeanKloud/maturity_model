@@ -175,7 +175,7 @@ export default function PremiumAssessmentPage({ onBack, onContinue }: PremiumAss
               </ul>
             </div>
             
-            <button className="w-full py-3 px-6 bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white rounded-lg font-semibold transition-all duration-200 flex items-center justify-center">
+            <button className="w-full py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all duration-200 flex items-center justify-center">
               Start Connected Assessment
               <ArrowLeft className="h-5 w-5 ml-2 rotate-180" />
             </button>

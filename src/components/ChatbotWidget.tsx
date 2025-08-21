@@ -377,7 +377,7 @@ export default function ChatbotWidget({ forceOpen = false, selectedDomain: propS
                         <ReactMarkdown>{msg.text}</ReactMarkdown>
                       </div>
                       {msg.options && Array.isArray(msg.options) && (
-                        <div className="mt-4 space-y-2">
+                        <div className="mt-6 space-y-3">
                           {msg.options.map((option, idx) => (
                             <button 
                               key={idx} 
@@ -385,7 +385,7 @@ export default function ChatbotWidget({ forceOpen = false, selectedDomain: propS
                                 setMessage(option);
                                 handleSendMessage();
                               }}
-                              className="block w-full text-left text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg px-4 py-2 transition-colors border border-blue-200"
+                              className="block w-full text-left text-gray-800 bg-white hover:bg-gray-50 rounded-lg px-6 py-4 transition-all duration-200 border border-gray-200 hover:border-blue-300 shadow-sm hover:shadow-md font-medium"
                             >
                               {option}
                             </button>
