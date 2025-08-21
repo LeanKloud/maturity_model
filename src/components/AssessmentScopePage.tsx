@@ -30,7 +30,7 @@ export default function AssessmentScopePage({ onBack, onContinue }: AssessmentSc
           </p>
           
           <div className="inline-block bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium mt-4">
-            Free Assessment
+            <span className="font-semibold">Free Assessment</span>
           </div>
         </div>
 
