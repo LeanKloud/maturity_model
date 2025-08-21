@@ -166,6 +166,12 @@ export default function ChatbotWidget({ forceOpen = false, selectedDomain: propS
         body: JSON.stringify(body)
       });
       
+      // Check if response is actually JSON
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Server returned non-JSON response. Please check if the backend service is running.');
+      }
+      
       const data = await response.json();
       const botReply: Message = {
         id: (Date.now() + 1).toString(),
@@ -177,9 +183,19 @@ export default function ChatbotWidget({ forceOpen = false, selectedDomain: propS
       setMessages(prev => [...prev, botReply]);
     } catch (error) {
       console.error('API Error:', error);
+      let errorMessage = '⚠️ **Connection Issue**\n\n';
+      
+      if (error instanceof Error && error.message.includes('non-JSON response')) {
+        errorMessage += 'The assessment service appears to be unavailable. This could be because:\n\n• The backend server is not running\n• The API endpoint is incorrect\n• There\'s a network connectivity issue\n\nPlease contact support or try again later.';
+      } else if (error instanceof Error && error.message.includes('Failed to fetch')) {
+        errorMessage += 'Unable to connect to the assessment service. Please check your internet connection and try again.';
+      } else {
+        errorMessage += 'I\'m having trouble connecting to the assessment server. Please check your internet connection and try again.\n\nIf the problem persists, please contact support.';
+      }
+      
       const errorReply: Message = {
         id: (Date.now() + 1).toString(),
-        text: '⚠️ **Connection Issue**\n\nI\'m having trouble connecting to the assessment server. Please check your internet connection and try again.\n\nIf the problem persists, please contact support.',
+        text: errorMessage,
         sender: 'bot',
         timestamp: new Date()
       };
