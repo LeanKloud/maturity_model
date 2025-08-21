@@ -94,7 +94,7 @@ export default function ChatbotWidget({ forceOpen = false, selectedDomain: propS
 
   // Auto-send start assessment and show bot reply in full-screen assessment mode
   useEffect(() => {
-    if (isFullScreen && !assessmentStarted && sessionId) {
+    if ((isFullScreen || selectedDomain) && !assessmentStarted && sessionId) {
       // Check for uploaded files from previous workflow
       const storedFiles = sessionStorage.getItem('uploadedFiles');
       let filesData = null;
@@ -123,7 +123,9 @@ export default function ChatbotWidget({ forceOpen = false, selectedDomain: propS
       // Send start assessment API call with file data if available
       const query = filesData 
         ? 'I have uploaded my infrastructure configuration files. Please analyze them and provide a comprehensive cloud maturity assessment.'
-        : 'start assessment';
+        : selectedDomain 
+          ? `start assessment for ${selectedDomain.title}`
+          : 'start assessment';
         
       sendApiRequest(query, filesData);
       setAssessmentStarted(true);
@@ -133,7 +135,7 @@ export default function ChatbotWidget({ forceOpen = false, selectedDomain: propS
         sessionStorage.removeItem('uploadedFiles');
       }
     }
-  }, [isFullScreen, assessmentStarted, sessionId]);
+  }, [isFullScreen, selectedDomain, assessmentStarted, sessionId]);
 
   // Helper to send API request
   const sendApiRequest = async (query: string | null, attachment: any | null) => {
@@ -249,23 +251,48 @@ export default function ChatbotWidget({ forceOpen = false, selectedDomain: propS
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-    if (file.type !== 'application/json') {
-      alert('Please upload a JSON file only.');
+    
+    const isValidType = file.type === 'application/json' || file.name.endsWith('.yaml') || file.name.endsWith('.yml');
+    if (!isValidType) {
+      alert('Please upload JSON or YAML files only.');
       event.target.value = '';
       return;
     }
+    
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+      alert('File size must be less than 10MB.');
+      event.target.value = '';
+      return;
+    }
+    
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
         const textContent = e.target?.result as string;
-        // Validate JSON first
-        const jsonData = JSON.parse(textContent);
+        
+        // Validate JSON/YAML format
+        if (file.type === 'application/json' || file.name.endsWith('.json')) {
+          JSON.parse(textContent); // Validate JSON
+        }
+        
         // Base64 encode the file content
         console.log('File uploaded:', file.name, 'Size:', file.size);
         const base64Content = btoa(textContent);
         setUploadedFile(base64Content);
+        
+        // Add file upload message immediately
+        const fileMessage: Message = {
+          id: Date.now().toString(),
+          text: `📁 **File Uploaded Successfully**\n\n✅ **${file.name}**\n📊 Size: ${(file.size / 1024).toFixed(1)} KB\n\nReady to analyze your infrastructure configuration...`,
+          sender: 'user',
+          timestamp: new Date(),
+          file: { name: file.name, content: base64Content }
+        };
+        setMessages(prev => [...prev, fileMessage]);
+        
       } catch (error) {
-        alert('Invalid JSON file. Please check the file format.');
+        alert('Invalid file format. Please check the file and try again.');
       }
     };
     reader.readAsText(file);
@@ -275,6 +302,7 @@ export default function ChatbotWidget({ forceOpen = false, selectedDomain: propS
   // Update handleSendMessage to use sendApiRequest
   const handleSendMessage = async () => {
     if (!message.trim() && !uploadedFile) return;
+    
     if (message.trim()) {
       const userMessage: Message = {
         id: Date.now().toString(),
@@ -284,18 +312,8 @@ export default function ChatbotWidget({ forceOpen = false, selectedDomain: propS
       };
       setMessages(prev => [...prev, userMessage]);
       setMessage('');
-      setMessage('');
     }
-    if (uploadedFile) {
-      const fileMessage: Message = {
-        id: Date.now().toString(),
-        text: `Uploaded configuration file`,
-        sender: 'user',
-        timestamp: new Date(),
-        file: { name: 'Uploaded file', content: uploadedFile }
-      };
-      setMessages(prev => [...prev, fileMessage]);
-    }
+    
     await sendApiRequest(message.trim() || null, uploadedFile || null);
     setUploadedFile(null);
   };
