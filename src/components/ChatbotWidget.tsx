@@ -160,7 +160,8 @@ export default function ChatbotWidget({ forceOpen = false, selectedDomain: propS
       const response = await fetch(API_ENDPOINT, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': 'true'
         },
         body: JSON.stringify(body)
       });

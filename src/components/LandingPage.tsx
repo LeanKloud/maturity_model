@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronRight, Shield, Network, DollarSign, BarChart3, Settings, Upload, FileText, Rocket } from 'lucide-react';
+import Config from '../config/configapi.json';
 import AssessmentQuestions from './AssessmentQuestions';
 import AssessmentScopePage from './AssessmentScopePage';
 import CloudProviderSelectionPage from './CloudProviderSelectionPage';
